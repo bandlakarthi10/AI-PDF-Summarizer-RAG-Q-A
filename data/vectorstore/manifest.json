@@ -1,0 +1,8 @@
+{
+  "generation": 6,
+  "vector_count": 76,
+  "chunk_count": 76,
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "dimension": 384,
+  "updated_at": "2026-08-16T17:58:01.143687+00:00"
+}
