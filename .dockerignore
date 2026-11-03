@@ -1,0 +1,29 @@
+# Git
+.git
+.gitignore
+
+# Environment files
+.env
+.env.*
+
+# Application persistent data
+data/
+backend/data/
+
+# Python bytecode and caches
+**/__pycache__
+*.py[cod]
+*$py.class
+.pytest_cache/
+backend/.pytest_cache/
+
+# Frontend local build and dependencies (fresh build inside Docker)
+frontend/node_modules
+frontend/dist
+frontend/.vite
+frontend/.vite-temp
+
+# Documentation and temporary files
+docs/
+backend/page0_inspect.png
+*.log

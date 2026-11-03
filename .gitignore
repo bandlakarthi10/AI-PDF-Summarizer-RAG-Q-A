@@ -1,0 +1,35 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Persistent application data (PDF uploads, SQLite DB, FAISS vector index)
+data/
+backend/data/
+
+# Python caches and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Pytest & Coverage
+.pytest_cache/
+backend/.pytest_cache/
+.coverage
+htmlcov/
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.vite-temp/
+
+# Temporary and debug artifacts
+backend/page0_inspect.png
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
