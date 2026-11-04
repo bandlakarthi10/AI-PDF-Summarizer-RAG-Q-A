@@ -139,11 +139,18 @@ Open browser at `http://localhost:5173`.
 
 ---
 
-## Running with Docker Compose
+## Production Deployment with Docker Compose
+
+The unified multi-stage Docker build bundles the compiled React frontend into the FastAPI ASGI service and provisions a persistent Ollama instance with automatic model pulling.
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
+
+- **Web Application & UI**: `http://localhost:8000/`
+- **Interactive API Documentation**: `http://localhost:8000/docs`
+- **System Health Diagnostics**: `http://localhost:8000/api/health`
+- **Data Persistence**: Uploaded PDFs, SQLite metadata, and FAISS vectors persist across restarts under `./data/`.
 
 ---
 

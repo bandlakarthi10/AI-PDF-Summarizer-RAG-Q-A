@@ -4,7 +4,8 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.core.logging_config import logger
@@ -53,10 +54,13 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
+    origins = [o.strip() for o in settings.ALLOWED_ORIGINS.split(",") if o.strip()]
+    allow_credentials = False if "*" in origins else True
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
+        allow_origins=origins,
+        allow_credentials=allow_credentials,
         allow_methods=["*"],
         allow_headers=["*"],
     )
@@ -75,9 +79,25 @@ def create_app() -> FastAPI:
     app.include_router(chat_router)
     app.include_router(summary_router)
 
-    @app.get("/", include_in_schema=False)
-    async def root():
-        return {"app": settings.APP_NAME, "docs": "/docs"}
+    # Static frontend serving (SPA fallback)
+    dist_dir = settings.FRONTEND_DIST_DIR
+    if dist_dir.exists() and (dist_dir / "index.html").exists():
+        assets_dir = dist_dir / "assets"
+        if assets_dir.exists():
+            app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
+
+        @app.get("/{full_path:path}", include_in_schema=False)
+        async def serve_spa(full_path: str):
+            if full_path.startswith("api/") or full_path in ("docs", "openapi.json"):
+                return JSONResponse(status_code=404, content={"detail": "Not found"})
+            target = dist_dir / full_path
+            if full_path and target.is_file():
+                return FileResponse(target)
+            return FileResponse(dist_dir / "index.html")
+    else:
+        @app.get("/", include_in_schema=False)
+        async def root():
+            return {"app": settings.APP_NAME, "docs": "/docs"}
 
     return app
 

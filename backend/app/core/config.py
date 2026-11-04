@@ -29,6 +29,12 @@ class Settings(BaseSettings):
     # Upload limits
     MAX_FILE_SIZE_MB: int = 50
 
+    # CORS & Security
+    ALLOWED_ORIGINS: str = "*"
+
+    # Frontend build distribution
+    FRONTEND_DIST_DIR: Path = ROOT_DIR / "frontend" / "dist"
+
     # Data directories (always anchored at ROOT_DIR)
     DATA_DIR: Path = ROOT_DIR / "data"
 
@@ -40,6 +46,16 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
+
+    @field_validator("FRONTEND_DIST_DIR", mode="before")
+    @classmethod
+    def _resolve_frontend_dir(cls, v):
+        if not v:
+            return ROOT_DIR / "frontend" / "dist"
+        p = Path(v)
+        if not p.is_absolute():
+            return (ROOT_DIR / p).resolve()
+        return p.resolve()
 
     @field_validator("DATA_DIR", mode="before")
     @classmethod
